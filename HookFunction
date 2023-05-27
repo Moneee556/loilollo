@@ -1,11 +1,23 @@
-local originalHookFunction = hookfunction
-
-local function newHookFunction(hookedFunction, replacementFunction)
-    if hookedFunction == game.GetObjects then
-        warn("Unauthorized attempt to hook game.GetObjects detected!")
-        game:GetService("Players").LocalPlayer:Kick()
-        return nil
+local function protectHookFunction()
+    local originalHookFunction = hookfunction
+    
+    local function newHookFunction(hookedFunction, replacementFunction)
+        if hookedFunction == game.GetObjects then
+            warn("Unauthorized attempt to hook game.GetObjects detected!")
+            game:GetService("Players").LocalPlayer:Kick()
+            return nil
+        end
+    
+        return originalHookFunction(hookedFunction, replacementFunction)
     end
-
-    return originalHookFunction(hookedFunction, replacementFunction)
+    
+    while true do
+        if getgenv().hookfunction ~= newHookFunction then
+            getgenv().hookfunction = newHookFunction
+        end
+        task.wait(1)
+    end
 end
+
+-- Start the loop to protect the hookfunction
+coroutine.wrap(protectHookFunction)()
