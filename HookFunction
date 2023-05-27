@@ -1,0 +1,11 @@
+local originalHookFunction = hookfunction
+
+local function newHookFunction(hookedFunction, replacementFunction)
+    if hookedFunction == game.GetObjects then
+        warn("Unauthorized attempt to hook game.GetObjects detected!")
+        game:GetService("Players").LocalPlayer:Kick()
+        return nil
+    end
+
+    return originalHookFunction(hookedFunction, replacementFunction)
+end
