@@ -1,16 +1,16 @@
 local function protectHookFunction()
     local originalHookFunction = hookfunction
-    
+
     local function newHookFunction(hookedFunction, replacementFunction)
-        if hookedFunction == game.GetObjects then
+        if hookedFunction == game.GetObjects and replacementFunction ~= nil then
             warn("Unauthorized attempt to hook game.GetObjects detected!")
             game:GetService("Players").LocalPlayer:Kick()
             return nil
         end
-    
+
         return originalHookFunction(hookedFunction, replacementFunction)
     end
-    
+
     while true do
         if getgenv().hookfunction ~= newHookFunction then
             getgenv().hookfunction = newHookFunction
